@@ -8,7 +8,7 @@ This modern period of science has been described as the post-genomic era, where 
 ```
 - Integrated Human Protein-Protein Interaction Network Generator: IHP-PING 
 - Python library implementing Semantic Similarity Measures [Library]: PySML
-'''
+```
 
 All the post-analysis-tools functions and methods have been documented in a  PDF manual, providing a more user-friendly starting point on admininstration and usage.
 # post-analysis-tools
