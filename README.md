@@ -2,16 +2,16 @@ The post-analysis-tools
 -----------
 This modern period of science has been described as the post-genomic era, where all available sources of information are explored at the biological systems level. This is in stark contrast to the older genocentric view, which sought to describe simple links connecting individual genes to particular phenotypes. Considering then the many genes which may contribute to disease, it is understandable that modern attempts to associate phenotypes with genetic variations do so on a genomic scale, using interactome, especially in the case of complex diseases, such as cancer, tuberculosis, etc.
 
-## 1. Present status
+### 1. Present status
 
 The present version implements two main objects, critical to post-analyses, network generator and semantic similarity tools:
-   > - Integrated Human Protein-Protein Interaction Network Generator: [IHP-PING](./ihp-ping) 
-   > - Python library implementing Semantic Similarity Measures \[Library\]: [PySML](./pysml)
+   > - Integrated Human Protein-Protein Interaction Network Generator: [IHP-PING](ihp-ping) 
+   > - Python library implementing Semantic Similarity Measures \[Library\]: [PySML](pysml)
    >
    
 All the post-analysis-tools functions and methods have been documented in a PDF manual, providing a more user-friendly starting point on admininstration and usage.
 
-## 2. History and release version
+### 2. History and release version
 
 The post-analysis-tools development was initially written by Gaston K. Mazandu \[Sickle Africa Data Coordinating Center (SADaCC) project in the Department Pathology, Division of Human Genetics at the University of Cape Town\] and collaborators. In addition, a large group of individuals is contributing to post-analysis-tools by sending suggestions and bug reports.
 
@@ -20,7 +20,7 @@ Since mid-2015 there has been a core group who worked on initial core of the pos
 >- v2.5.1: The PySML library.
 >
 
-## 3. Specific license
+### 3. Specific license
 These tools are freely downloadable under GNU General Public License (GPL), precompiled for Linux version and protected by copyright laws, a free software and comes with ABSOLUTELY NO WARRANTY.
 
 
