@@ -12,7 +12,7 @@
 ### 2. History and release version
 
 > The post-analysis-tools development was initially written by Gaston K. Mazandu \[Sickle Africa Data Coordinating Center (SADaCC) project in the Department Pathology, Division of Human Genetics at the University of Cape Town\] and collaborators. In addition, a large group of individuals is contributing to post-analysis-tools by sending suggestions and bug reports.
-
+>
 > Since mid-2015 there has been a core group who worked on initial core of the post-analysis-tools code archive. This file has been revised since the release of the A-DaGO-Fun tool in 2015. The new releases and associated versions are provided below:
 >- v2.4.1: The IHP-PING package.
 >- v2.5.1: The PySML library.
