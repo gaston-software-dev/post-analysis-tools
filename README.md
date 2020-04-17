@@ -6,7 +6,8 @@ This modern period of science has been described as the post-genomic era, where 
 
 The present version implements two main objects, critical to post-analyses, network generator and semantic similarity tools:
    > + Integrated Human Protein-Protein Interaction Network Generator: IHP-PING 
-     + Python library implementing Semantic Similarity Measures \[Library\]: PySML
+   > + Python library implementing Semantic Similarity Measures \[Library\]: PySML
    >
+   
 All the post-analysis-tools functions and methods have been documented in a PDF manual, providing a more user-friendly starting point on admininstration and usage.
 
