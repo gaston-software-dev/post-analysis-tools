@@ -12,7 +12,7 @@ The present version implements two main objects, critical to post-analyses, netw
 The post-analysis-tools development was initially written by Gaston K. Mazandu and collaborators. In addition, a large group of individuals is contributing to post-analysis-tools by sending suggestions and bug reports.
 
 Since mid-2015 there has been a core group who worked on initial core of the post-analysis-tools code archive. This file has been revised since the release of the A-DaGO-Fun tool in 2015. The new releases and associated versions are provided below:
-```diff
+```
 - v2.4.1: The IHP-PING package.
 - v2.5.1: The PySML library.
 ```
