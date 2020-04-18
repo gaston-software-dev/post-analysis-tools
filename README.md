@@ -11,7 +11,7 @@ IHP-PING v2.4.1 requires Python &ge; 2.7), requiring the installation of the NCB
 #### 2. Quick start guide
 Please refer to the [PDF reference manual](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/ihp-ping-dev/IHP-PING_Manual_2020.pdf) on how to download or clone the IHP-PING package. **IHP-PING** is run using the following one line command:
 
-<pre class="color: #CEECF5;"> <span class="color:red"><em>python</em></span> `ihppinbuilder.py` `-r` _resources_ `-o` _outputfolder_ `-i` _outputProtID_ `-f` _outputfileformat_ </pre>
+<pre class="color: #CEECF5;"> <span style="color:red;">python</span> `ihppinbuilder.py` `-r` _resources_ `-o` _outputfolder_ `-i` _outputProtID_ `-f` _outputfileformat_ </pre>
 
 #### 3. Specific license
 These tools are freely downloadable under [GNU General Public License (GPL)](https://www.gnu.org/licenses/gpl-3.0.en.html), precompiled for Linux version and protected by copyright laws, a free software and comes with ABSOLUTELY NO WARRANTY.
