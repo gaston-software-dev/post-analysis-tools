@@ -15,6 +15,7 @@ As illustrations:
 
 <code>
      python ihppinbuilder.py  -f csv
+     
      python ihppinbuilder.py  -r stringdb biogrid dip -i genename -f csv2
 </code>
 
