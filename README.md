@@ -9,9 +9,9 @@ textsf{IHP-PING} contains one main module and one main folder containing modules
 IHP-PING v2.4.1 requires Python ($\geq$ 2.7), requiring the installation of the NCBI BLAST software locally when retrieving interactions predicted from sequence data. It also requires the selenium Python package, as well as chromedriver and chromium-browser, for retrieving the DIP dataset. These needs to be installed prior to the use of IHP-PING. It is worth noting that IHP-PING is an adaptable, portable and expandable Python resource that can run on any computer and any operating system provided that the computer runs Python and satisfies the requirements, but it has been tested only on Linux (ubuntu).
 
 #### 2. Quick start guide
-Please refer to the [PDF reference manual](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/ihp-ping-dev/IHP-PING_Manual_2020.pdf) on how to download or clone the IHP-PING package. *IHP-PING* is run using the following one line command:
+Please refer to the [PDF reference manual](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/ihp-ping-dev/IHP-PING_Manual_2020.pdf) on how to download or clone the IHP-PING package. **IHP-PING** is run using the following one line command:
 ``` 
- `python` `ihppinbuilder.py` `-r` _resources_ `-o` _outputfolder_ `-i` _outputProtID_ `-f` _outputfileformat_
+ <span style="color:red">python</span> `ihppinbuilder.py` `-r` _resources_ `-o` _outputfolder_ `-i` _outputProtID_ `-f` _outputfileformat_
 ```
 
 #### 3. Specific license
