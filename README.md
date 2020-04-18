@@ -15,9 +15,8 @@ As illustrations:
 
 <code>
      python ihppinbuilder.py  -f csv
-     
      python ihppinbuilder.py  -r stringdb biogrid dip -i genename -f csv2
-<code>
+</code>
 
 #### 3. Specific license
 These tools are freely downloadable under [GNU General Public License (GPL)](https://www.gnu.org/licenses/gpl-3.0.en.html), precompiled for Linux version and protected by copyright laws, a free software and comes with ABSOLUTELY NO WARRANTY.
