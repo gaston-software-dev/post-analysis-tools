@@ -14,18 +14,18 @@ Please refer to the [PDF reference manual](http://web.cbio.uct.ac.za/ITGOM/post-
      python ihppinbuilder.py -r resources -o outputfolder -i outputProtID -f outputfileformat
 </pre>
 As illustrations:
-
 <pre>
      python ihppinbuilder.py  -f csv
      python ihppinbuilder.py  -r stringdb biogrid dip -i genename -f csv2
 </pre>
+The first command generates a unified human PPI network derived from all sources under consideration currently, and save under the working directory (default) in csv format. Similarly, for the second command, only STRING, BioGrid and DIP databases are used and the network is saved as a csv2 (semi-column separated value) file with the gene name ID system. 
 
 #### 3. Specific license
 These tools are freely downloadable under [GNU General Public License (GPL)](https://www.gnu.org/licenses/gpl-3.0.en.html), precompiled for Linux version and protected by copyright laws, a free software and comes with ABSOLUTELY NO WARRANTY.
 
 
 ### Contact
-Please use the [pysml-dev](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/mysml-dev/) specific website link to contact the maintainer for related suggestions or for reporting potential bugs and errors or specific concerns related to the post-analysis-tools related codes. 
+Please use the [ihp-ping-dev](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/ihp-ping-dev/) specific website link to contact the maintainer for related suggestions or for reporting potential bugs and errors or specific concerns related to the post-analysis-tools related codes. 
 
 ### Acknowledgements
 Any work dependent on open-source software owes debt to those who developed these tools. The authors thank everyone involved with free software, from the core developers to those who contributed to the documentation. Many thanks to the authors of the freely available libraries for making this work possible. This study is supported by the National Institutes of Health (NIH), USA, under Common Fund under H3ABioNet (U24HG006941) and SADaCC (1U01HG007459-01).
