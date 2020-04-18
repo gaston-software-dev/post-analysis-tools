@@ -7,7 +7,7 @@ A repository of python modules for retrieving semantic similarity (SS) scores fo
 **PySML** v2.5.1 requires Python &ge; 2.7) and one package, _python-networkx_ is required for any application implemented. This needs to be installed prior to the use of PySML and for running common related applications to SS measures: Entity Fuzzy classification, Entity Fuzzy Identification and Concept Fuzzy Enrichment, additional _python-scipy_ and _python-matplotlib_ should be installed. It is worth noting that this library is an adaptable, portable and expandable Python resource that can run on any computer and any operating system provided that the computer runs Python and satisfies the requirements, but it has been tested only on Linux (ubuntu).
 
 #### 2. Quick start guide
-Please refer to the [PDF reference manual](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/mysml-dev/PySML_Manual_2020.pdf) on how to download or clone the **PySML** package. **PySML** is run using the following one line command:
+Please refer to the [PDF reference manual](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/pysml-dev/PySML_Manual_2020.pdf) on how to download or clone the **PySML** package. **PySML** is run using the following one line command:
 <pre>
      python procsemsim.py -t ss-model -m models -p parameters -d dataset -a annotationfile -f ontologyfile -n namespace -o outputfile -s value
 </pre>
@@ -20,7 +20,7 @@ As illustrations:
 The first command produces a table of entity pairwise 'Prot1', 'Prot2' and 'Prot3' SS scores for models (BMA, Nunivers, Universal), non-ontology Kappa-Statistics (SimKPS) and Jaccard-like (UI-like) using the ontology GO biological process by default and displaying the result on the screen. The second command will process IC scores for Meng et al., Universal, Zanchez et al. Zhang et al. Wang et al. and Seco et al. models using the ontology provided under the **tests** folder with biological\_process as a default ontology namespace, writing all ontology concept IC scores in a file whose the name is printed on the screen and located in the current working directory (by default). The last command is similar to the the second, but it uses a default ontology, which is provided in the **tests** folder with biological\_process as ontology namespace by default,  displaying on the screen (-s 1) by default, IC scores only for the five concepts provided.
 
 ### Contact
-Please use the [pysml-dev](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/mysml-dev/) specific website link to contact the maintainer for related suggestions or for reporting potential bugs and errors or specific concerns related to the post-analysis-tools related codes. 
+Please use the [pysml-dev](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/pysml-dev/) specific website link to contact the maintainer for related suggestions or for reporting potential bugs and errors or specific concerns related to the post-analysis-tools related codes. 
 
 ### Acknowledgements
 Any work dependent on open-source software owes debt to those who developed these tools. The authors thank everyone involved with free software, from the core developers to those who contributed to the documentation. Many thanks to the authors of the freely available libraries for making this work possible. This study is supported by the National Institutes of Health (NIH), USA, under Common Fund under H3ABioNet (U24HG006941) and SADaCC (1U01HG007459-01).
