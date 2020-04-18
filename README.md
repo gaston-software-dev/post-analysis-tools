@@ -7,7 +7,7 @@ A repository of python modules for retrieving semantic similarity (SS) scores fo
 **PySML** v2.5.1 requires Python &ge; 2.7) and one package, _python-networkx_ is required for any application implemented. This needs to be installed prior to the use of PySML and for running common related applications to SS measures: Entity Fuzzy classification, Entity Fuzzy Identification and Concept Fuzzy Enrichment, additional _python-scipy_ and _python-matplotlib_ should be installed. It is worth noting that this library is an adaptable, portable and expandable Python resource that can run on any computer and any operating system provided that the computer runs Python and satisfies the requirements, but it has been tested only on Linux (ubuntu).
 
 #### 2. Quick start guide
-Please refer to the [PDF reference manual](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/ihp-ping-dev/IHP-PING_Manual_2020.pdf) on how to download or clone the **PySML** package. **PySML** is run using the following one line command:
+Please refer to the [PDF reference manual](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/mysml-dev/PySML_Manual_2020.pdf) on how to download or clone the **PySML** package. **PySML** is run using the following one line command:
 <pre>
      python procsemsim.py -t ss-model -m models -p parameters -d dataset -a annotationfile -f ontologyfile -n namespace -o outputfile -s value
 </pre>
