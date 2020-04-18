@@ -11,7 +11,7 @@ IHP-PING v2.4.1 requires Python &ge; 2.7), requiring the installation of the NCB
 #### 2. Quick start guide
 Please refer to the [PDF reference manual](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/ihp-ping-dev/IHP-PING_Manual_2020.pdf) on how to download or clone the IHP-PING package. **IHP-PING** is run using the [following](+) one line command:
 ```diff
-```python``` ihppinbuilder.py *-r* resources -o outputfolder -i outputProtID -f outputfileformat
+<font color="red">python</font> ihppinbuilder.py -r resources -o outputfolder -i outputProtID -f outputfileformat
 ```
 
 #### 3. Specific license
