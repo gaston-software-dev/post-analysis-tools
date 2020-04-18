@@ -1,31 +1,27 @@
-### The IHP-PING Package
+### The post-analysis-tools
+This modern period of science has been described as the post-genomic era, where all available sources of information are explored at the biological systems level. This is in stark contrast to the older genocentric view, which sought to describe simple links connecting individual genes to particular phenotypes. Considering then the many genes which may contribute to disease, it is understandable that modern attempts to associate phenotypes with genetic variations do so on a genomic scale, using interactome, especially in the case of complex diseases, such as cancer, tuberculosis, etc.
 
-A repository of python modules for easing integration of existing human PPI datasets from multiple sources into a unified PPI network on-the-fly (in real time), which is stored locally for further user applications. This provides a platform that enables the retrieval of human PPI datasets stored in different online resources and produced a real time up-to-date integrated human PPI network with increased accuracy, confidence and coverage. IHP-PING retrieves human PPI datasets from eight different resources (Refer to the [PDF manual](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/ihp-ping-dev/IHP-PING_Manual_2020.pdf) for details).
+#### 1. Present status
+The present version implements two main objects, critical to post-analyses, network generator and semantic similarity tools:
+    - Integrated Human Protein-Protein Interaction Network Generator: [IHP-PING](https://github.com/gkm-software-dev/post-analysis-tools/tree/master/ihp-ping-dev) 
+    - Python library implementing Semantic Similarity Measures \[Library\]: [PySML](https://github.com/gkm-software-dev/post-analysis-tools/tree/master/mysml-dev)
+ All the post-analysis-tools functions and methods have been documented in a PDF manual, providing a more user-friendly starting point on admininstration and usage.
 
-## Tool administration and usage
-textsf{IHP-PING} contains one main module and one main folder containing modules required for generating an integrated human PPI network and formatting results to be written into a file.
+#### 2. History and release version
 
-#### 1. Requirements
-IHP-PING v2.4.1 requires Python &ge; 2.7), requiring the installation of the NCBI BLAST software locally when retrieving interactions predicted from sequence data. It also requires the selenium Python package, as well as chromedriver and chromium-browser, for retrieving the DIP dataset. These needs to be installed prior to the use of IHP-PING. It is worth noting that IHP-PING is an adaptable, portable and expandable Python resource that can run on any computer and any operating system provided that the computer runs Python and satisfies the requirements, but it has been tested only on Linux (ubuntu).
+The post-analysis-tools development was initially written by Gaston K. Mazandu and collaborators. In addition, a large group of individuals is contributing to post-analysis-tools by sending suggestions and bug reports.
 
-#### 2. Quick start guide
-Please refer to the [PDF reference manual](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/ihp-ping-dev/IHP-PING_Manual_2020.pdf) on how to download or clone the IHP-PING package. **IHP-PING** is run using the [following](+) one line command:
-<pre>
-     python ihppinbuilder.py -r resources -o outputfolder -i outputProtID -f outputfileformat
-</pre>
-As illustrations:
-<pre>
-     python ihppinbuilder.py  -f csv
-     python ihppinbuilder.py  -r stringdb biogrid dip -i genename -f csv2
-</pre>
-The first command generates a unified human PPI network derived from all sources under consideration currently, and save under the working directory (default) in csv format. Similarly, for the second command, only STRING, BioGrid and DIP databases are used and the network is saved as a csv2 (semi-column separated value) file with the gene name ID system. 
+Since mid-2015 there has been a core group who worked on initial core of the post-analysis-tools code archive. This file has been revised since the release of the A-DaGO-Fun tool in 2015. The new releases and associated versions are provided below:
+- v2.4.1: The IHP-PING package.
+- v2.5.1: The PySML library.
+
 
 #### 3. Specific license
 These tools are freely downloadable under [GNU General Public License (GPL)](https://www.gnu.org/licenses/gpl-3.0.en.html), precompiled for Linux version and protected by copyright laws, a free software and comes with ABSOLUTELY NO WARRANTY.
 
 
 ### Contact
-Please use the [ihp-ping-dev](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/ihp-ping-dev/) specific website link to contact the maintainer for related suggestions or for reporting potential bugs and errors or specific concerns related to the post-analysis-tools related codes. 
+Please use the [pysml-dev](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/mysml-dev/) or [ihp-ping-dev](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/ihp-ping-dev/) specific web link to contact the maintainer for related suggestions or for reporting potential bugs and errors or specific concerns related to the post-analysis-tools related codes. 
 
 ### Acknowledgements
 Any work dependent on open-source software owes debt to those who developed these tools. The authors thank everyone involved with free software, from the core developers to those who contributed to the documentation. Many thanks to the authors of the freely available libraries for making this work possible. This study is supported by the National Institutes of Health (NIH), USA, under Common Fund under H3ABioNet (U24HG006941) and SADaCC (1U01HG007459-01).
