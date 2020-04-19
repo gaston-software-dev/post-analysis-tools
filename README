@@ -1,0 +1,101 @@
+
+			THE BASIC post-analysis tools README
+
+(See the tool "PDF/RESOURCES" for more detailed information at the
+following links: 
+                                 - For the IHP-PING package at
+http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/ihp-ping-dev/IHP-PING_Manual_2020.pdf
+				                 - For the PySML library at
+http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/pysml-dev/PySML_Manual_2020.pdf
+
+where tool administration and usage are also provided)				            
+
+1. INTRODUCTION
+
+This modern period of science has been described as the post-genomic era, where 
+all available sources of information are explored at the biological systems 
+level. This is in stark contrast to the older genocentric view, which sought to 
+describe simple links connecting individual genes to particular phenotypes. 
+Considering then the many genes which may contribute to disease, it is unders-
+tandable that modern attempts to associate phenotypes with genetic variations 
+do so on a genomic scale, using interactome, especially in the case of complex 
+diseases, such as cancer, tuberculosis, etc.
+
+In the context of post-analysis approach in biology, we are developing tools 
+that can ease the analyses of these genes or proteins and the retrieval of 
+related information of these genes/proteins, including:
+  (1) Identifying and ranking genes or proteins associated with biological 
+  experiments, 
+  (2) Retrieving biological processes most pertinent to the biological 
+  experiments, 
+  (3) Describing and characterizing the structure of protein datasets and 
+  elucidating protein orgene set patterns in order to improve biological 
+  interpretation.
+More specificlly, to improve the process of Protein function prediction, candi-
+date gene or target prediction and prioritization, post genome-wide association 
+analyses, prediction of disease phenotype trends, and identification of disease 
+related genetic patterns or properties.
+
+The post-analysis tools is free software distributed under a GNU-style copyleft.
+
+These tools are freely downloadable under GNU General Public License (GPL), pre-
+compiled for Linux version and protected by copyright laws, a free software and 
+comes with ABSOLUTELY NO WARRANTY.
+
+This directory contains different libraries and packages implemenetd in the 
+context of post-analysis tools, entirely in the Python programming language, 
+versions >= 2.7. These different tools are developed under the leadership of 
+Gaston K. Mazandu, who regularly updates the information available in this 
+package and makes every effort to ensure the quality of this information.
+
+2. HISTORY
+
+The post-analysis-tools development was initially written by Gaston K. Mazandu
+of the Sickle Africa Data Coordinating Center (SADaCC) project in the Depart-
+ment Pathology, Division of Human Genetics at the University of Cape Town. In 
+addition, a large group of individuals is contributing to post-analysis-tools 
+by sending suggestions and bug reports.
+
+Since mid-2015 there has been a core group who worked on initial core of the
+post-analysis-tools code archive.
+
+This file has been minimally revised since the release of the A-DaGO-Fun tool
+in 2015
+
+3. PRESENT STATUS
+
+The present version implements two main objects, critical to post-analyses:
+
+- Integrated Human Protein-Protein Interaction Network Generator: IHP-PING 
+- Python library implementing Semantic Similarity Measures [Library]: PySML
+
+All the post-analysis-tools functions and methods have been documented in a  PDF 
+manual, providing a more user-friendly starting point on admininstration and 
+usage.
+
+Version history
+---------------
+
+- v2.4.1: The IHP-PING package.
+- v2.5.1: The PySML library.
+
+Maintainer
+----------
+
+Gaston K. Mazandu
+Email: gaston.mazandu@uct.ac.za, gmazandu@gmail.com,kuzamunu@aims.ac.za
+
+Contributors
+------------
+Mazandu GK, Hooper C, Opap K, Makinda FL, Nembaware V, Christian Bope, 
+Thomford NE, Chimusa ER, Wonkam A, Mulder NJ.
+Email: gaston.mazandu@uct.ac.za, 
+        
+Classifier: License :: GPL (>= 2)
+Classifier: Operating System :: OS Independent, but tested only on Linux
+Classifier: Programming Language :: Python :: >= 2.7
+Classifier: Topic :: Software Development :: Libraries
+
+Sincerely,
+
+The Core-development team.
