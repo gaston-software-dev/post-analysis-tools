@@ -29,4 +29,7 @@ Please use the [pysml-dev](http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/p
 
 ### Acknowledgements
 Any work dependent on open-source software owes debt to those who developed these tools. The authors thank everyone involved with free software, from the core developers to those who contributed to the documentation. Many thanks to the authors of the freely available libraries for making this work possible. This study is supported by the National Institutes of Health (NIH), USA, under Common Fund under H3ABioNet (U24HG006941) and SADaCC (1U01HG007459-01).
+<<<<<<< HEAD
 
+=======
+>>>>>>> aba50fceaeb1bcaa747eceb751fe09befe4fb4ae
