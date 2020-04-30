@@ -184,10 +184,10 @@ Email: gaston.mazandu@uct.ac.za, gmazandu@gmail.com,
 9. Contributors
 ---------------
 
-Mazandu GK, Opap K, Makinde FL, Nembaware V, Bope C, Chimusa ER, Wonkam A, 
+Mazandu GK, Opap K, Makinde FL, Nembaware V, Agamah F, Bope C, Chimusa ER, Wonkam A, 
 Mulder NJ
 Emails: gaston.mazandu@uct.ac.za, babuken@gmail.com, funmite@aims.ac.za, 
-vnembaware@gmail.com, christian.bope@gmail.com, emile.chimusa@uct.ac.za, 
+vnembaware@gmail.com, francisagamahh@gmail.com, christian.bope@gmail.com, emile.chimusa@uct.ac.za, 
 nicola.mulder@uct.ac.za, ambroise.wonkam@uct.ac.za
 
 ::  python setup --classifiers        ::
