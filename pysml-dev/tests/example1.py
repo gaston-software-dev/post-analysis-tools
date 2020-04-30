@@ -7,7 +7,7 @@ import sys, os, time
 try:
 	__IPYTHON__
 except NameError:
-	print("\nNote that this illustration should be run using Interactive Python (ipython)\nand not just python. Please run this under as follow:\n\tipython tests/example1.py\n\nOr alternatively, run ipython, by typing ipython from the shell and then type:\n\t run tests/idexample.py\n\nRemember that this is run under the pysml directory and \nipython can be ipython2 or ipython3 or just ipython, depending on the version installed.\n")
+	print("\nNote that this illustration should be run using Interactive Python (ipython)\nand not just python. Please run this under as follow:\n\tipython tests/example1.py\n\nOr alternatively, run ipython, by typing ipython from the shell and then type:\n\t run tests/example.py\n\nRemember that this is run under the pysml directory and \nipython can be ipython2 or ipython3 or just ipython, depending on the version installed.\n")
 	sys.exit(0)
 
 dcd = os.getcwd()
