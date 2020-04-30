@@ -1,4 +1,6 @@
-# coding: utf-8
+#!/usr/bin/python
+# -*- coding: utf8 -*-
+
 """
 PySML-dev applications
 ======================
@@ -9,7 +11,8 @@ analysis, Entity identification and cluste-
 ring or classification.
 """
 
-__all__ = ["conceptenrichment", "entityidentification"]
+__all__ = ["conceptenrichment", "entityidentification", "entityclassification"]
 
 from .conceptenrichment import ConceptEnrichment
 from .entityidentification import EntityIdentification
+from .entityclassification import EntityClassification

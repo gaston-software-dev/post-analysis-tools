@@ -41,6 +41,7 @@ This code was written by
 
 from __future__ import print_function, division
 from math import exp, log, tanh, atan, pi as PI
+from functools import reduce
 
 import sys, os
 
@@ -422,7 +423,7 @@ class ConceptSimilarity(InformationContent):
 		app = kwargs['app'] if 'app' in kwargs else 'universal' 
 		cf = kwargs['cf'] if 'cf' in kwargs else 0
 		gr = kwargs['gr'] if 'gr' in kwargs else 0
-		# Setting potential parameters for information content
+		# Setting potential parameters for information content:22539 GO:0098813
 		if not 'sigma' in kwargs: kwargs['sigma'] = 0.5
 		if not 'TermStats' in kwargs: kwargs['TermStats'] = {}
 		if not 'TermIC' in kwargs: kwargs['TermIC'] = {}
@@ -433,7 +434,7 @@ class ConceptSimilarity(InformationContent):
 		tics = {}
 		for t in ics:
 			panc = nx.ancestors(self.DagStr, t); panc.add(t)
-			tics[t] = sum([1.0/(1.0+exp(-1.0/ics[t])) if ics[t] else 1.0 for t in panc])
+			tics[t] = sum([1.0/(1.0+exp(-1.0/ics[s])) if ics[s] else 1.0 for s in panc])
 		data = {}
 		for p, q in pairids:
 			if p==q: data[(p, q)] = 1.0
@@ -793,7 +794,7 @@ class ConceptSimilarity(InformationContent):
 				data[(p,q)] = (1/(1+dic))*(mica/(mica+bic))
 		return data
 	
-	def parameterChecks(**kwargs):
+	def parameterChecks(self, **kwargs):
 		""" Checking IC and CS specific arguments.
 		Check whether different model parameters meet requirements, i.e.,
 		all model parameters set in the required range and pass if true,
@@ -876,18 +877,24 @@ class ConceptSimilarity(InformationContent):
 			self.models.append((models.lower(),))
 
 		if not self.models: # proposed approach, not known 
-			print(InputError('Concept semantic similarity model- Value Error', 'Please provide the list or tuple of semantic similarity model and IC approach, if appliable, (ssm, ic), pairs.\n\nPlease refer to the tool documentation, fix this issue and try again ...\n'))
+			print(InputError('Concept semantic similarity model - Value Error', 'Please provide the list or tuple of semantic similarity model and IC approach, if appliable, (ssm, ic), pairs.\n\nPlease refer to the tool documentation, fix this issue and try again ...\n'))
 			sys.exit(2)
+		
+		if all(isinstance(s, (list, tuple)) for s in TermPairs): pass
+		elif all(isinstance(s, str) for s in TermPairs): TermPairs = [(p, q) for p in TermPairs for q in TermPairs]
+		else:
+			print(InputError("Concept or concept pair list - Value Error', 'A list of entities or entity pairs provided is not valid\nPlease refer to the tool documentation, fix this issue and try again ....\n"))
 
-		self.TargetPairs = {}; self.TargetMissing = {}
-		if isinstance(TermPairs, (list, set, tuple)):
-			for tt in TermPairs:
-				if tt in self.alt_id and self.alt_id[tt] in self.DagStr:
-					self.TargetPairs[self.alt_id[tt]] = tt
-				elif tt in self.Dag and self.Dag.index(tt) in self.DagStr:
-					self.TargetPairs[self.Dag.index(tt)] = tt
-				else: # Term is either obsolete or does not exist in the current onto!
-					self.TargetMissing.add(tt)
+		self.TargetPairs = {}; self.TargetMissing = set(); TargetPairsR = {}
+		Pairs = set(reduce(lambda x, y: x + y, TermPairs))
+		for tt in Pairs:
+			if tt in self.alt_id and self.alt_id[tt] in self.DagStr:
+				self.TargetPairs[self.alt_id[tt]] = tt; TargetPairsR[tt] = self.alt_id[tt]
+			elif tt in self.Dag and self.Dag.index(tt) in self.DagStr:
+				self.TargetPairs[self.Dag.index(tt)] = tt; TargetPairsR[tt] = self.Dag.index(tt)
+			else: # Term is either obsolete or does not exist in the current onto!
+				self.TargetMissing.add(tt)
+		del Pairs				
 
 		tmodels = set([s[0] for s in self.models])
 		if not self.ShortPath and set(self.CatPaths) & tmodels: 
@@ -900,14 +907,21 @@ class ConceptSimilarity(InformationContent):
 			self.deep = -min(list(set(self.DicLevels.values())))
 		del tmodels
 		
-		self.outputs = {}; pq = []; self.keepterms = sorted(list(self.TargetPairs.keys()))
-		for k in [(p, q) for p in self.keepterms for q in self.keepterms]:
-			if not (k in pq or (k[1],k[0]) in pq): pq.append(k)
-
+		self.outputs = {}
+		keepterms = [(TargetPairsR[s[0]], TargetPairsR[s[1]]) for s in TermPairs if s[0] in TargetPairsR and s[1] in TargetPairsR]
+		del TargetPairsR
+		if not keepterms:
+			print(InputError('Concept or concept pair list - Value Error', 'Concepts provided could not be mapped to active terms in the ontology.\n\nPlease refer to the tool documentation, fix this issue and try again ...\n'))
+			sys.exit(2)
+		self.keepterms = [] 
+		for p in keepterms:
+			if not (p[1], p[0]) in self.keepterms: self.keepterms.append(p)
+		del keepterms
+		
 		for fct in self.models:
 			try: kwargs['app'] = fct[1]
 			except: pass
-			self.outputs[fct] = getattr(self,self.Models[fct[0]])(pq, **kwargs)
+			self.outputs[fct] = getattr(self,self.Models[fct[0]])(self.keepterms, **kwargs)
 
 	@output_str
 	def __str__(self):
@@ -915,13 +929,18 @@ class ConceptSimilarity(InformationContent):
         """
 		headers = ['Concept1', 'Concept2']; tmp = list(self.outputs.keys())
 		for ms in tmp:
-			if len(ms)==2: headers.append('{}-{}'.format(ms[0].capitalize(), ms[1][:4] if len(ms[1])>3 else ms[1]))
+			if len(ms)==2: headers.append('{}-{}'.format(ms[0].capitalize(), ms[1].capitalize()))#[:4] if len(ms[1])>3 else ms[1]))
 			else: headers.append('{}-{}'.format(ms[0].capitalize(), ''))
-		nn = len(self.keepterms)
-		results = [[self.Dag[k[0]], self.Dag[k[1]]] + [self.outputs[s][k] for s in tmp] for k in [(self.keepterms[i], self.keepterms[j]) for i in range(nn) for j in range(i,nn)]]
+		results = [[self.Dag[k[0]], self.Dag[k[1]]] + [self.outputs[s][k] for s in tmp] for k in self.keepterms]
 		return '\n'+tabs(results, headers, tablefmt = 'grid', floatfmt=".5f", stralign="center")
-
+	
+	@output_str
 	def __repr__(self):
 		""" Return repr(self)
 		"""
-		return self.outputs
+		headers = ['Concept1', 'Concept2']; tmp = list(self.outputs.keys())
+		for ms in tmp:
+			if len(ms)==2: headers.append('{}-{}'.format(ms[0].capitalize(), ms[1].capitalize()))#[:4] if len(ms[1])>3 else ms[1]))
+			else: headers.append('{}-{}'.format(ms[0].capitalize(), ''))
+		results = [[self.Dag[k[0]], self.Dag[k[1]]] + [self.outputs[s][k] for s in tmp] for k in self.keepterms]
+		return '\n'+tabs(results, headers, tablefmt = 'plain', floatfmt=".5f", stralign="center")

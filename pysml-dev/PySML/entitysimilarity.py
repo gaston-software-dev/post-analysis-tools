@@ -641,7 +641,7 @@ class EntitySimilarity(ConceptSimilarity):
 		EntityPairs = []
 		if Pairs:
 			for p, q in Pairs:
-				if CurrentAnnots[p] and CurrentAnnots[q]: EntityPairs.append((p,q))
+				if p in CurrentAnnots and q in CurrentAnnots: EntityPairs.append((p,q))
 				else:
 					pass # impossibility of retrieving scores, add to an appropriate set
 		else:
@@ -655,9 +655,14 @@ class EntitySimilarity(ConceptSimilarity):
 		CSf = [meas for meas in self.measures if (meas[0] in self.icf or meas[0] in self.edf)] # Pairwise cat
 		NOs = [meas for meas in self.measures if meas[0] in self.nnt]
 		
-		if ICg: self.groupwise(CurrentAnnots, EntityPairs, ICg) # Run for pairwise
-		if CSf: self.pairwise(CurrentAnnots, EntityPairs, CSf) # Run for groupwise
-		if NOs: self.ontology_indep(CurrentAnnots, EntityPairs, NOs) # Run no-ontology based
+		Fpairs = []
+		for k in EntityPairs:
+			if not (k[1], k[0]) in Fpairs: Fpairs.append(k)
+		del EntityPairs
+		
+		if ICg: self.groupwise(CurrentAnnots, Fpairs, ICg) # Run for pairwise
+		if CSf: self.pairwise(CurrentAnnots, Fpairs, CSf) # Run for groupwise
+		if NOs: self.ontology_indep(CurrentAnnots, Fpairs, NOs) # Run no-ontology based
 
 	@output_str
 	def __str__(self):

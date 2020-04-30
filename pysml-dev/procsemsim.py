@@ -71,7 +71,7 @@ def main():
 	print('\n'+74*'*'+'\n*'+'These are requirements for running Integrated Human PPI Generator tool'.center(71)+' *\n'+74*'*')
 	print('\nPlatform: Python version >= 2.7.x\n\nOS      : Independent, but tested only on Linux (Ubuntu)')
 	print("\nThe current PyPML library version retrieves semantic similarity scores\nof all known SS models:\n")
-	print("For more information, please refer to the manual at:\n\t1. http://web.cbio.uct.ac.za/ITGOM/pysml/PySML_Documentation.pdf\n\t2. http://web.cbio.uct.ac.za/ITGOM/adagofun/PKG-INFO\n\t3. https://github.com/gkm-software-dev/post-analysis-tools\n\nOr go to the PySML directory and type the following command line:")
+	print("For more information, please refer to the manual at:\n\t1. http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/pysml/PySML_Documentation.pdf\n\t2. http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/pysml/PKG-INFO\n\t3. https://github.com/gkm-software-dev/post-analysis-tools\n\nOr go to the PySML directory and type the following command line:")
 	print("\n\tpython setup.py --long-description")
 	print("\nRequires: python networkx library")
 	print('\nOUTPUT  : SS scores are displayed on the screen or written to a file.\n')
@@ -93,7 +93,12 @@ def main():
 		print("\nExiting PySML. Thanks for using this tool! You can try again at any time.\n")
 		print(74*'*'+'\n')
 		sys.exit(2)
-		
+	
+	# Quickly check whether the type of measure provided is valid
+	if not argss.mtype in ['ic', 'cs', 'es']:
+		print('\nMeasure Type Error: There exist three following categories of SS measures-\n\n\tic: For concept information content (IC) scores, \n\tcs: For concept pairwise SS scores and  \n\tes: For entity pairwise SS scores.\n\nPlease refer to the tool manual, fix this issue and try again ...\n'+74*'*'+'\n')
+		sys.exit(3)
+	
 	# Check whether python network library required for creating ontology DAG exists
 	import imp
 	spec = None
@@ -112,61 +117,69 @@ def main():
 	allconic = set(['universal', 'wang', 'zhang', 'seco', 'zho', 'seddiqui', 'zanchez', 'meng', 'stats', 'vic', 'assdd'])
 	measures = {'ic':(allconic, [('universal',)]), 'cs': (allconsim, [('nunivers', 'universal')]), 'es': (allentsim, [('bma', 'nunivers', 'universal')])}
 	
-	nnt = set(['cho', 'ald', 'kstats', 'nto', 'ub', 'db', 'ui']); models = []
-	if argss.models is None: models = measures[measures[argss.mtype][1]]
-	elif isinstance(argss.models, str) and argss.models.strip():
-		if argss.models.strip() in measures[argss.mtype][0]: models = [(argss.models.strip(),)]
-		else:
-			print()
-			parser.error("\nModel Error -- Model or model type provided does not exist\nPlease read the library manual for more information\nargument -m/--models: expected an appropriate argument.\n")
+	models = []
+	if not argss.models: models = measures[argss.mtype][1] # Considering no measure is provided
 	elif isinstance(argss.models, list):
 		for mod in argss.models:
 			tline = re.split(":|,|-", mod.strip())
+			while '' in tline: tline.remove('')
 			if len(tline) in [1, 2, 3] and tline[0] in measures[argss.mtype][0]: models.append(tuple(tline))
 			else:
-				print()
-				parser.error("\nModel Error -- Model provided is not appropriate or do not match Model Type\nPlease read the library manual for more information\nargument -m/--models: expected an appropriate argument.\n")
+				parser.error("\n\nModel Error -- Model provided is not appropriate or do not match Model Type\nPlease read the library manual for more information\nargument -m/--models: expected an appropriate argument.\n")
 	else:
-		print()
-		parser.error("\nModel structure format Error\nPlease read the library manual for more information\nargument -f/--ontologyfile: expected ontology file.\n")
+		parser.error("\n\nModel structure format Error\nPlease read the library manual for more information\nargument -f/--ontologyfile: expected ontology file.\n")
 
 	if not models:
-		print()
-		parser.error("\nModel Error -- Model format provided is not valid\nPlease read the library manual for more information\nargument -m/--models: expected an appropriate argument.\n")
+		parser.error("\n\nModel Error -- Model format provided is not valid\nPlease read the library manual for more information\nargument -m/--models: expected an appropriate argument.\n")
 		
 	# This means that the ontology must be provided
 	Pairs = []; Annots = {}
-	if argss.mtype in ['ic', 'cs']: 
-		if argss.data is None and argss.mtype=='cs':
-			print()
-			parser.error("\nConcept or concept pair list : Value Error\nFor the type of measure chosen, a list of concepts or concept pairs should be provided\nargument -d/--data: expected list pof concepts or concept pairs.\n")
-		elif len(argss.data)==1 and argss.data[0].strip():
-			try:
-				arg = os.path.abspath(argss.data[0])
-				fp = open(arg)
-				for line in fp:
-					tline = line.strip()
-					if not tline: continue
-					tline = [s.strip() for s in re.split("\s+|,|;", tline)]
-					if len(tline)==2: Pairs.append(tuple(tline))
-					elif len(tline)==1: Pairs.append(tline[0])
-				fp.close()
-			except:
-				for mod in argss.data:
-					tline = re.split(",|-", mod.strip())
-					if len(tline)==2: Pairs.append(tuple(tline))
-					elif len(tline)==1: Pairs.append(tline[0])
+	if argss.data is None:
+		if argss.mtype=='cs':
+			parser.error("\n\nConcept or concept pair list : Value Error\nFor the type of measure chosen, a list of concepts or concept pairs should be provided\nargument -d/--data: expected list of concepts or concept pairs.\n")
+	elif len(argss.data)==1 and argss.data[0].strip():
+		try: # It might be a file
+			arg = os.path.abspath(argss.data[0])
+			fp = open(arg)
+			for line in fp:
+				tline = line.strip()
+				if not tline: continue
+				tline = [s.strip() for s in re.split("\s+|,|;", tline)]
+				while '' in tline: tline.remove('')
+				if len(tline)==2: Pairs.append(tuple(tline))
+				elif len(tline)==1: Pairs.append(tline[0])
+			fp.close()
+		except: # It might be a pair or a single concept or entity!
+			tline = mod.strip().split(",")
+			while '' in tline: tline.remove('')
+			if len(tline)==2: Pairs.append(tuple(tline))
+			elif len(tline)==1: Pairs.append(tline[0])
+	else: # This means that we are dealing with list or pairs of terms or entities
+		for mod in argss.data:
+			tline = mod.strip().split(",")
+			while '' in tline: tline.remove('')
+			if len(tline)==2: Pairs.append(tuple(tline))
+			elif len(tline)==1: Pairs.append(tline[0])
+
+	# Checking list of pairs!
+	if argss.mtype=='ic':
+		if Pairs:
+			if not all(isinstance(s, str) for s in Pairs):
+				print()
+				parser.error("\nConcept list : Value Error-List of concepts provided is not valid\nargument -d/--data: expected list of concepts or concept pairs.\n")
+	elif argss.mtype=='cs':
+		if not Pairs: # For cs list of concepts or concept pairs is required
+			parser.error("\n\nConcept or concept pair list : Value Error\nA list of concepts or concept pairs provided is not valid\nargument -d/--data: expected list of concepts or concept pairs.\n")
 		else:
-			Pairs = argss.data[:] ###############
-
-		if not Pairs and argss.mtype=='cs':
-			print()
-			parser.error("\nConcept or concept pair list : Value Error\nA list of concepts or concept pairs provided is not valid\nargument -d/--data: expected list of concepts or concept pairs.\n")
-
+			if all(isinstance(s, str) for s in Pairs): # We are dealing with list of concepts
+				Pairs = [(s, t) for s in Pairs for t in Pairs]
+			elif all(isinstance(s, tuple) for s in Pairs): # We are already dealing with list of concept pairs
+				pass
+			else: # Value error- mixing concepts and concept pairs
+				parser.error("\n\nConcept or concept pair list : Value Error\nA list of concepts or concept pairs provided is not valid\nargument -d/--data: expected list of concepts or concept pairs.\n")
 	elif argss.mtype=='es':
 		if argss.annot is None or (isinstance(argss.annot, str) and not argss.annot.strip()):
-			print()
-			parser.error("\nAnnotation file: Value Error\nFor the type of measure chosen, an annotation file, entity-concept mapping should be provided\nargument -a/--annotationfile: expected annotation file.\n")
+			parser.error("\n\nAnnotation file: Value Error\nFor the type of measure chosen, an annotation file, entity-concept mapping should be provided\nargument -a/--annotationfile: expected annotation file.\n")
 		else:
 			try:
 				arg = os.path.abspath(argss.annot)
@@ -176,48 +189,52 @@ def main():
 					if not tline: continue
 					tline = [s.strip() for s in re.split("\s+", tline)]
 					if len(tline)==2:
-						Annots[tline[0]] = set(re.split(";|:|,|-", tline))
+						ttline = re.split(";|,", tline[1])
+						while '' in ttline: ttline.remove('')
+						Annots[tline[0]] = set(ttline)
 				fp.close()
 			except:
 				try: Annots = eval(argss.annot)
 				except:
-					parser.error("\nAnnotation variable: Value Error\nFor the type of measure chosen, the annotation variable entity-concept\n\nmapping should be a dictionary-like string\nargument -a/--annotationfile: expected annotation file.\n")
+					parser.error("\n\nAnnotation variable: Value Error\nFor the type of measure chosen, the annotation variable entity-concept\n\nmapping should be a dictionary-like string\nargument -a/--annotationfile: expected annotation file.\n")
 
 		if not isinstance(Annots, dict) or not Annots:
-			parser.error("\nAnnotation variable: Value or Type Error\nFor the type of measure chosen, the annotation variable entity-concept mapping should be a no empty dictionary\nargument -a/--annotationfile: expected annotation file.\n")
-		if isinstance(argss.data, str) and argss.data.strip():
-			try:
-				arg = os.path.abspath(argss.data)
-				fp = open(arg)
-				for line in fp:
-					tline = line.strip()
-					if not tline: continue
-					tline = [s.strip() for s in re.split("\s+|,|;", tline)]
-					if len(tline)==2: Pairs.append(tuple(tline))
-					elif len(tline)==1: Pairs.append(tline[0])
-				fp.close()
-			except:
-				for mod in argss.data:
-					tline = re.split(",|-", mod.strip())
-					if len(tline)==2: Pairs.append(tuple(tline))
-					elif len(tline)==1: Pairs.append(tline[0])
-				print(argss.data, Pairs)
-		print(Pairs)
+			parser.error("\n\nAnnotation variable: Value or Type Error\nFor the type of measure chosen, the annotation variable entity-concept mapping should be a no empty dictionary\nargument -a/--annotationfile: expected annotation file.\n")
 		if not Pairs: Pairs = [(p, q) for p in Annots for q in Annots]
+		else:
+			if all(isinstance(s, str) for s in Pairs): # We are dealing with list of concepts
+				Pairs = [(p, q) for p in Pairs for q in Pairs]
+			elif all(isinstance(s, tuple) for s in Pairs): # We are already dealing with list of concept pairs
+				pass
+			else: # Value error- mixing concepts and concept pairs
+				parser.error("\n\nEntity (protein) or entity pair list : Value Error\nA list of entities or entity pairs provided is not valid\nargument -d/--data: expected list of entities or entity pairs.\n")
+	
+	OtherPar = {}
+	if argss.parameter:
+		try: OtherPar = eval(argss.parameter)
+		except:
+			parser.error("\n\nOther measure parameter: Type Error\nOther parameters should be presented as string-like dictionary \nargument -p/--parameter: expected string-like dictionary.\n")
+	if not isinstance(OtherPar, dict):
+		parser.error("\n\nOther measure parameter: Type Error\nOther parameters should produce a dictionary \nargument -p/--parameter: expected string-like dictionary.\n")
 
 	# Now processing different scores
+	print("\nThanks for choosing PySML. Start processing on %s"%str(time.asctime(time.localtime())))
 	now = time.time()
+	is_a = OtherPar['is_a'] if 'is_a' in OtherPar else None
+	part_of = OtherPar['part-of'] if 'part_of' in OtherPar else None
+	if argss.ontology is None: argss.ontology = ''
 	if argss.mtype=='ic':
-		simscore = InformationContent(ontofile = argss.ontology, namespace = argss.ontospace) 
+		simscore = InformationContent(ontofile = argss.ontology, namespace = argss.ontospace, is_a = is_a, part_of = part_of) 
 		# getIC(self, approach = None, TermList = None, **kwargs)
-		simscore.getIC([s[0] for s in models], Pairs)
+		simscore.getIC([s[0] for s in models], Pairs, **OtherPar)
 		ScoreFile = 'InformationContentFile%d.txt'%(random.randint(0,100000),)
-	elif argss.mtype=='cs':
-		pass
-		ScoreFile = 'EntitySSFile%d.txt'%(random.randint(0,100000),)
-	elif argss.mtype=='es':
-		simscore = EntitySimilarity(ontofile = argss.ontology, namespace = 'biological_process')
-		simscore.entitySim(Annots, Pairs, models)
+	elif argss.mtype=='cs': #computeSim(self, TermPairs, models = None, **kwargs)
+		simscore = ConceptSimilarity(ontofile = argss.ontology, namespace = argss.ontospace, is_a = is_a, part_of = part_of)
+		simscore.computeSim(Pairs, models, **OtherPar)
+		ScoreFile = 'ConceptSSFile%d.txt'%(random.randint(0,100000),)
+	elif argss.mtype=='es': #['GO:0000022', 'GO:0051231', 'GO:1903047', 'GO:0000278', 'GO:0007052', 'GO:0000023', 'GO:0005984'], [nunivers-zho resnik:zhang wang wang_edge lin,zanchez aic wu hrss jiang]
+		simscore = EntitySimilarity(ontofile = argss.ontology, namespace = argss.ontospace, is_a = is_a, part_of = part_of)
+		simscore.entitySim(Annots, Pairs, models, **OtherPar)
 		ScoreFile = 'EntitySSFile%d.txt'%(random.randint(0,100000),)
 	
 	# Finally, outputting the score on screen or written into a file! 
@@ -231,8 +248,6 @@ def main():
 			print("Scores are reported in the file: %s"%(arg,))
 		except:
 			parser.error("\nWriting output error\nImpossible to write in %s\nargument -o/--out: Output error, scores cannot be written in the file.\n"%(arg,))
-			
-	print("\nThanks for choosing PySML. Start processing on %s"%str(time.asctime(time.localtime())))
 	
 	print("Processing accomplished on %s. Thanks!"%str(time.asctime(time.localtime())))
 	tt = time.time()-now
