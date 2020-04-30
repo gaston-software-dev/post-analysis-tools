@@ -98,7 +98,7 @@ retrieving and integrating human PPI networks into a unifed PPI netwok.
 ---------------
 
 The main website for the PySML library is: 
-.. http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/ihp-ping-dev          :: 
+.. http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/pysml-dev          :: 
 where users can find essential information about PySML. It is freely downloadable 
 under GNU General Public License (GPL), pre-compiled for Linux version and 
 protected by copyright laws. Users are free to copy, modify, merge, publish, 
