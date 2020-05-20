@@ -135,7 +135,8 @@ def get_uniprotid():
 			print('Error code: ', error.code)
 	else:
 		response = progressbar("UniProt reviewed IDs")
-		response = response.decode().split('\n')
+		try: response = response.decode('UTF-8').split('\n')
+		except: response = response.split('\n')
 		for line in response[1:]:
 			tline = line.strip()
 			if not tline: continue
@@ -185,11 +186,15 @@ def id_select(RequiredID):
 						tline = line.strip()
 						if not tline: continue
 						tline = [s.strip() for s in tline.split()]
-						for maps in tline[1].split(';'):
+						try: tline1 = tline[1].decode('UTF-8').split(';')
+						except: tline1 = tline[1].split(';')
+						for maps in tline1:
 							try:
 								tmp = maps.split()[0].strip()
-								if tmp: SetData[idmap][tmp] = tline[0].strip()
-							except: pass
+								if tmp: 
+									try: SetData[idmap][tmp] = tline[0].decode('UTF-8').strip()
+									except: SetData[idmap][tmp] = tline[0].strip()
+							except:	pass
 			for r in RequiredID:
 				if os.path.isfile(FileNames[r]): os.remove(FileNames[r])
 			del SetData
@@ -219,9 +224,10 @@ def get_protseq():
 		response = progressbar("Protein Sequences")
 		FileNamePrefix = "Sequence%d"%(random.randint(0,100000),)
 		fw = open(FileNamePrefix+'.fasta', 'w'); DiffFiles.add(FileNamePrefix+'.fasta')
-		fw.write(response); fw.close()
+		try:fw.write(response.decode('UTF-8'))
+		except: fw.write(response)
+		fw.close()
 		print("\rNow building local blast database and perform blastall ...")
-
 		ccb = 0
 		if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
 			locate_app = 'which'
@@ -231,26 +237,27 @@ def get_protseq():
 		elif not subprocess.call([locate_app, 'formatdb']): ccb = 2
 
 		if ccb==1:
-			os.popen("makeblastdb -in %s.fasta -dbtype prot -out %s"%(FileNamePrefix, FileNamePrefix))
-			os.popen('blastp -query %s.fasta -db %s -out %sBlast.txt -outfmt "6 qseqid sseqid bitscore" -evalue 0.01'%(FileNamePrefix, FileNamePrefix, FileNamePrefix))
+			proc = subprocess.check_output(["/bin/sh", "-c", 'makeblastdb -in %s.fasta -dbtype prot -out %s ; exit 0'%(FileNamePrefix, FileNamePrefix)])
+			proc = subprocess.check_output(["/bin/sh", "-c", 'blastp -query %s.fasta -db %s -out %sBlast.txt -outfmt "6 qseqid sseqid bitscore" -evalue 0.01 ; exit 0'%(FileNamePrefix, FileNamePrefix, FileNamePrefix)])
 			DiffFiles.add(FileNamePrefix+'.phr'); DiffFiles.add(FileNamePrefix+'.pin') 
 			DiffFiles.add(FileNamePrefix+'.psq') #; DiffFiles.add("formatdb.log")
-			os.system('clear')
+			proc = subprocess.Popen("clear")
 			print('\n'+74*'*')
 		elif ccb==2:
-			os.popen("formatdb -i %s.fasta -p T -n %s"%(FileNamePrefix, FileNamePrefix))
-			os.popen('blastall -p blastp -d %s -i %s.fasta -o %sBlast.txt -m 8 -e 0.01'%(FileNamePrefix, FileNamePrefix, FileNamePrefix))
+			proc = subprocess.check_output(["/bin/sh", "-c", "formatdb -i %s.fasta -p T -n %s ; exit 0"%(FileNamePrefix, FileNamePrefix)])
+			proc = subprocess.check_output(["/bin/sh", "-c", 'blastall -p blastp -d %s -i %s.fasta -o %sBlast.txt -m 8 -e 0.01 ; exit 0'%(FileNamePrefix, FileNamePrefix, FileNamePrefix)])
 			DiffFiles.add(FileNamePrefix+'.phr'); DiffFiles.add(FileNamePrefix+'.pin') 
 			DiffFiles.add(FileNamePrefix+'.psq') #; DiffFiles.add("formatdb.log")
-			os.system('clear')
+			proc = subprocess.Popen("clear")
 			print('\n'+74*'*')
 		else:
 			print("Blast is not installed which is required when using sequence data. Please install blast and try again, or remove sequence from the resources parameter when running IHP-PING.")
 			sys.exit() # Message that Blast is not installed and exit
+			
 		print("\rNow computing sequence blast scores, this may take time ...")
-
-		GetAllScores = computeScoreBlast(FileNamePrefix+'Blast.txt')
-		DiffFiles.add(FileNamePrefix+'Blast.txt')
+		BlastFile = FileNamePrefix+'Blast.txt'
+		GetAllScores = computeScoreBlast(BlastFile)
+		DiffFiles.add(BlastFile)
 		# Deleting all files generated to produce Sequence Blast Scores
 		for fp in DiffFiles:
 			if os.path.isfile(fp): os.remove(fp)
@@ -280,7 +287,8 @@ def get_protintepro():
 		response = gzip.GzipFile(fileobj = io.BytesIO(response))
 		Sign = {}; ProtList = {}
 		for line in response:
-			sline = line.strip()
+			try: sline = line.decode('UTF-8').strip()
+			except: sline = line.strip()
 			if not sline: continue
 			sline = sline.split('\t')
 			ProteinId, InterProSig = sline[0].strip(), sline[1].strip()
@@ -326,7 +334,8 @@ def get_mint(ns, ind = 0):
 		print("Now reading MINT PPI file of size %s bytes. This may take time ..."%(sys.getsizeof(response),))
 		count = 0; response = io.BytesIO(response)
 		for line in response:
-			tline = line.strip()
+			try: tline = line.decode('UTF-8').strip()
+			except: tline = line.strip()
 			count += 1
 			print("\rCurrently %d lines are already read ..."%(count,), end=',')
 			if not tline: continue
@@ -412,7 +421,8 @@ def get_dip(ns, ind = 0):
 	with gzip.open(FileName, "rb") as fp:
 		count = 0
 		for line in fp:
-			tline = line.decode().strip()
+			try:tline = line.decode('UTF-8').strip()
+			except: line.strip()
 			count += 1
 			print("\rCurrently %d lines are already read ..."%(count,), end=',')
 			if not tline: continue
@@ -504,12 +514,13 @@ def get_stringdb(ns, ind = 0):
 		response = gzip.GzipFile(fileobj = io.BytesIO(response))
 		response.readline(); count = 0
 		for line in response:
-			sline = line.strip()
+			try: sline = line.decode('UTF-8').strip()
+			except: sline = line.strip()
 			count += 1
 			print("\rCurrently %d lines are already read ..."%(count,), end=',')
 			if not sline: continue
 			sline = sline.split()
-			Prot1, Prot2, Score = str(sline[0].decode()), str(sline[1].decode()), str(sline[-1].decode())
+			Prot1, Prot2, Score = str(sline[0]), str(sline[1]), str(sline[-1])
 			if Prot1 in _STRINGMAP and Prot2 in _STRINGMAP:
 				if _STRINGMAP[Prot1] in _REVIEWEDID and _STRINGMAP[Prot1] in _REVIEWEDID:
 					key = tuple(sorted([_STRINGMAP[Prot1], _STRINGMAP[Prot2]]))
@@ -554,16 +565,17 @@ def get_hprd(ns, ind = 0):
 		msize = [os.path.getsize('./%s/%s'%(FolderName, d)) for d in datasets]
 		fp = open('./%s/%s'%(FolderName, datasets[msize.index(max(msize))]))
 		for line in fp:
-			sline = line.strip()
+			try: sline = line.decode('UTF-8').strip()
+			except: sline = line.strip()
 			count += 1
 			print("\rCurrently %d lines are already read ..."%(count,), end=',')
 			if not sline: continue
 			sline = sline.split()
-			Prot1, Prot2 = str(sline[2].decode()), str(sline[5].decode()) #0-3GeneSymbol
+			Prot1, Prot2 = str(sline[2]), str(sline[5]) #0-3GeneSymbol
 			Prot1, Prot2 = Prot1.strip(), Prot2.strip()
 			if Prot1 in _REFSEQ and Prot2 in _REFSEQ:
 				if _REFSEQ[Prot1] in _REVIEWEDID and _REFSEQ[Prot1] in _REVIEWEDID:
-					dline = str(sline[-2].decode()), str(sline[-1].decode())
+					dline = str(sline[-2]), str(sline[-1])
 					dscore = len([s.strip() for s in dline[0].strip().split(';')]) + len(set([s.strip() for s in dline[1].strip().split(',')]))
 					key = tuple(sorted([_REFSEQ[Prot1], _REFSEQ[Prot2]]))
 					try: GetAllScores[key][ind] = 1.0 - 1.0/dscore
@@ -609,15 +621,22 @@ def get_intact(ns, ind = 0):
 			for name in response.namelist():
 				fpath = os.getcwd()+'/IntactDataset%d.txt'%(random.randint(0,100000),)
 				with open(fpath, 'w') as fw:
-					fw.write(response.read(name))
+					try: 
+						splt = '\t'; fw.write(response.read(name))
+					except:
+						splt = '\\t'
+						with response.open(name) as readfile:
+							for line in io.TextIOWrapper(readfile, 'utf8'):
+								fw.write(repr(line)+'\n')
 				fp = open(fpath, 'r'); count = 0; DataInter = {}
 				for line in fp:
 					ligne = line.strip()
 					count += 1
 					print("\rCurrently %d lines are already read ..."%(count,), end=',') 
 					if not ligne: continue  
-					ligne = ligne.split('\t')
-					Prot1, Prot2 = ligne[0].strip(), ligne[1].strip()
+					ligne = ligne.strip('\'').strip('\"').strip().split(splt)
+					try: Prot1, Prot2 = ligne[0].strip(), ligne[1].strip()
+					except: continue
 					nat = ligne[35].strip() #positive (if false) or negative (if true)
 					org =  ligne[28].strip()
 					if not org: continue
@@ -667,15 +686,22 @@ def get_biogrid(ns, ind = 0):
 				if 'Homo_sapiens' in name:
 					fpath = os.getcwd()+'/BioGridDataset%d.txt'%(random.randint(0,100000),)
 					with open(fpath, 'w') as fw:
-						fw.write(response.read(name))
+						try: 
+							splt = '\t'; fw.write(response.read(name))
+						except:
+							splt = '\\t'
+							with response.open(name) as readfile:
+								for line in io.TextIOWrapper(readfile, 'utf8'):
+									fw.write(repr(line)+'\n')					
 					fp = open(fpath, 'r'); count = 0; DataInter = {}
 					for line in fp:
 						ligne = line.strip()
 						count += 1
 						print("\rCurrently %d lines are already read ..."%(count,), end=',') 
 						if not ligne: continue  
-						ligne = [x.strip() for x in ligne.split('\t')]
-						Prot1, Prot2 = ligne[1], ligne[2]
+						ligne = [x.strip() for x in ligne.strip('\'').strip('\"').split(splt)]
+						try: Prot1, Prot2 = ligne[1], ligne[2]
+						except: continue
 						if Prot1 in _GENEIDMAP and Prot2 in _GENEIDMAP:
 							if _GENEIDMAP[Prot1] in _REVIEWEDID and _GENEIDMAP[Prot2] in _REVIEWEDID:
 								key = tuple(sorted([_GENEIDMAP[Prot1], _GENEIDMAP[Prot2]]))
@@ -815,7 +841,7 @@ def main():
 			print(74*'*'+'\n')
 			sys.exit(2)	
 
-	if len(treq) >= 1:
+	if len(UserReq) >= 1:
 		get_uniprotid()
 		reqidmap = set(UserReq) & set(['stringdb', 'biogrid', 'hprd']) # need ID mapping
 		if reqidmap: id_select(reqidmap)

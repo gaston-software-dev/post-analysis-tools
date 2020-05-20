@@ -43,8 +43,10 @@ def computeScoreBlast(Input):
 	print("\rReading Blast Scores: %s %d%s"%(45*'=',100,'%'))
 	print("Reading successfully completed ...")
 	fp.close()
-	for key in Control.keys(): # Removing no symetrical existence
+	S = list(Control.keys())
+	for key in S: # Removing no symetrical existence
 		if not (key[1],key[0]) in Control: Control.pop(key, None)
+	del S
 
 	KeepScores = {}
 	count = 0
@@ -105,7 +107,7 @@ def computeFamilyScore(SignatureNumber, ControlProt, alpha = 0.75, penal = 0.675
 	ss = sqrt(sum([(x-mu)**2 for x in data])/len(data))
 
 	KeepScores = {}
-	Protein = ControlProt.keys()
+	Protein = list(ControlProt.keys())
 	count = 0
 	stringp = "\rComputing InterPro Scores: %s %d%s"%(40*'.',0,'%')
 	nl = len(ControlProt)

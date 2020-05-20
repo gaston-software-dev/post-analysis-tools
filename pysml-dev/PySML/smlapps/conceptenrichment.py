@@ -235,11 +235,22 @@ class ConceptEnrichment(ConceptSimilarity):
 			Fl03 -= nx.ancestors(self.DagStr, t) # Remove ancestors of the term t
 		
 		Fl03 = set([t for t in Fl03 if P03[t][1] < kwargs['pvalue']])
-		if not Fl03: # No term passed the Bonferroni correction	
-			pass
-		
-		# building output
 		outs = []
+		if not Fl03: # No term passed the Bonferroni correction
+			Tmp = set([t for t in Fl03 if P03[t][0] < kwargs['pvalue']])
+			print("\n\nUnfortunately, no enriched concept has been identified for\nthreshold or cutoff of %.5f indicated."%(kwargs['pvalue'],))
+			if Tmp:
+				for t in Tmp:
+					outs.append([self.Dag[t], -self.DicLevels[t], P03[t][0], P03[t][1]])
+				outs = sorted(outs, key = lambda x: (x[-1], -x[1]))
+				outputfile = 'EntityIdentificationResults%d.txt'%(random.randint(0,100000),)
+				print("\nGenerale Statistics for each target concepts can be found in the file: [%s]"%(outputfile,))
+				fp = open(outputfile, 'w')
+				fp.write(tabs(outs, headers, tablefmt = 'plain', floatfmt="1.2e", stralign="center"))
+				fw.close()
+			sys.exit()
+						
+		# building output
 		for t in Fl03: # Concept-ID, Term Level, p-value, Bonferroni correction
 			outs.append([self.Dag[t], -self.DicLevels[t], P03[t][0], P03[t][1]])
 		outs = sorted(outs, key = lambda x: (x[-1], -x[1]))
