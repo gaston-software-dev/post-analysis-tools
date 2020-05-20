@@ -9,9 +9,9 @@ similarity between objects annotated by ontology terms or concepts, e.g.,
 Gene Ontology-based functional analysis using term information content 
 measures.
 This python code implements fuzzy entity search or identification based
-on semantic similarity concepts. Furthemore, this is context independent 
-and can be used for any GO annotated dataset as population background or
-reference and is not a context-based search.
+on semantic similarity concepts. This is context independent and can be used
+for any GO annotated dataset as population background or reference and is not
+a context-based search.
 
 The main website for the PySML library is:
  
