@@ -787,9 +787,14 @@ class ConceptSimilarity(InformationContent):
 				qanc = nx.ancestors(self.DagStr, q); qanc.add(q)
 				canc = panc & qanc
 				mica = max([tinfo[c] for c in canc])
+				if not mica:
+					 data[(p,q)] = 0.0
+					 continue
 				dic = abs(tinfo[p]-mica) + abs(tinfo[q]-mica)
-				bp = max([tinfo[d] for d in nx.descendants(self.DagStr, p) & leaves])
-				bq = max([tinfo[d] for d in nx.descendants(self.DagStr, q) & leaves])
+				desc = nx.descendants(self.DagStr, p) & leaves
+				bp = max([tinfo[d] for d in desc]) if desc else tinfo[p]
+				desc = nx.descendants(self.DagStr, q) & leaves
+				bq = max([tinfo[d] for d in desc]) if desc else tinfo[q]
 				bic = (abs(bp - tinfo[p]) + abs(bq - tinfo[q]))/2
 				data[(p,q)] = (1/(1+dic))*(mica/(mica+bic))
 		return data
