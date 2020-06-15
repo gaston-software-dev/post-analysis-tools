@@ -9,9 +9,9 @@ similarity between objects annotated by ontology terms or concepts, e.g.,
 Gene Ontology-based functional analysis using term information content 
 measures.
 This python code implements fuzzy entity search or identification based
-on semantic similarity concepts. This is context independent and can be used
-for any GO annotated dataset as population background or reference and is not
-a context-based search.
+on semantic similarity concepts. Furthemore, this is context independent 
+and can be used for any GO annotated dataset as population background or
+reference and is not a context-based search.
 
 The main website for the PySML library is:
  
@@ -36,18 +36,130 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 See <http://www.gnu.org/licenses/>.
 
 This code was written by 
-    Gaston K. Mazandu <gaston.mazandu@uct.ac.za, gmazandu@gmail.com, 
-                       kuzamunu@aims.ac.za>
-    (c) 2020 under free software (GPL), all rights reserved.\n                  
+	Gaston K. Mazandu <gaston.mazandu@uct.ac.za, gmazandu@gmail.com, 
+					   kuzamunu@aims.ac.za>
+	(c) 2020 under free software (GPL), all rights reserved.\n				  
 *******************************************************************************   
 """
 
 from __future__ import print_function, division
 
-import sys, os, re, time, datetime, random
+import sys, os, re, time, datetime, random, ntpath, re, tempfile, errno
 
 from PySML import __author__, __author_email__, __version__, __license__
 from PySML import *
+
+ERROR_INVALID_NAME = 123
+
+def getFilepath (out, mtype):
+	if out != os.getcwd():
+		if os.path.isabs(out):
+			fileext = os.path.splitext(out)
+			if (fileext[1]):
+				pathargument = os.path.split(out)
+
+				if (pathargument[0]):
+					isDirValid(pathargument[0])
+					ScoreFile = out
+				else:
+					ScoreFile = os.sep.join(os.getcwd(), pathargument[1])
+			else:
+				ScoreFile = generateModelFilename(mtype, out)
+		else:
+			fileext = os.path.splitext(out)
+			if (fileext[1]):
+				ScoreFile = os.path.sep.join([os.getcwd(), out])
+			else:
+				sys.exit("Filename/Directory Error: \""+out+"\" is not a valid directory or filename.\n")
+	else:
+		ScoreFile = generateModelFilename(mtype, os.getcwd())
+
+	return ScoreFile
+
+def generateModelFilename(mtype, directory):
+	isDirValid(directory)
+	if mtype=='ic':
+		ScoreFile = os.path.normpath(os.sep.join([directory, 'InformationContentFile%d.txt'%(random.randint(0,100000),)]))
+	elif mtype=='cs':
+		ScoreFile = os.path.normpath(os.sep.join([directory, 'ConceptSSFile%d.txt'%(random.randint(0,100000),)]))
+	elif mtype=='es':
+		ScoreFile = os.path.normpath(os.sep.join([directory, 'EntitySSFile%d.txt'%(random.randint(0,100000),)]))
+
+	return ScoreFile
+
+def isFileWritable(ScoreFile):
+	if not (is_path_exists_or_creatable_portable(ScoreFile)):
+		sys.exit("Filename Error: "+ScoreFile+" not writable.\n")
+	else:
+		print("Path to file: "+ScoreFile+"\n")
+
+def is_path_sibling_creatable(pathname: str) -> bool:
+	# Function taken from StackOverflow - questions/9532499
+	'''
+	`True` if the current user has sufficient permissions to create **siblings**
+	(i.e., arbitrary files in the parent directory) of the passed pathname;
+	`False` otherwise.
+	'''
+	dirname = os.path.dirname(pathname) or os.getcwd()
+	
+	try:
+		# There is a problem occuring here with windows when trying to write to a systems directory - program becomes unresponsive
+		with tempfile.TemporaryFile(dir = dirname): pass
+		return True
+	except EnvironmentError:
+		return False
+
+def is_path_exists_or_creatable_portable(pathname: str) -> bool:
+	# Function taken from StackOverflow - questions/9532499
+	'''
+	`True` if the passed pathname is a valid pathname on the current OS _and_
+	either currently exists or is hypothetically creatable in a cross-platform
+	manner optimized for POSIX-unfriendly filesystems; `False` otherwise.
+
+	This function is guaranteed to _never_ raise exceptions.
+	'''
+
+	try:
+		return is_pathname_valid(pathname) and (os.path.exists(pathname) or is_path_sibling_creatable(pathname))
+	except OSError:
+		return False
+
+def is_pathname_valid(pathname: str) -> bool:
+	# Function taken from StackOverflow - questions/9532499
+	'''
+	`True` if the passed pathname is a valid pathname for the current OS;
+	`False` otherwise.
+	'''
+	try:
+		if not isinstance(pathname, str) or not pathname:
+			return False
+
+		_, pathname = os.path.splitdrive(pathname)
+
+		root_dirname = os.environ.get('HOMEDRIVE', 'C:') \
+			if sys.platform == 'win32' else os.path.sep
+
+		assert os.path.isdir(root_dirname)
+
+		root_dirname = root_dirname.rstrip(os.path.sep) + os.path.sep
+
+		for pathname_part in pathname.split(os.path.sep):
+			try:
+				os.lstat(root_dirname + pathname_part)
+			except OSError as exc:
+				if hasattr(exc, 'winerror'):
+					if exc.winerror == ERROR_INVALID_NAME:
+						return False
+				elif exc.errno in {errno.ENAMETOOLONG, errno.ERANGE}:
+					return False
+	except TypeError as exc:
+		return False
+	else:
+		return True
+
+def isDirValid(directory):
+	if not (os.path.isdir(directory)):
+		sys.exit("Directory Error: "+directory+" does not exist.\n")
 
 def main():
 	from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
@@ -59,7 +171,7 @@ def main():
 	parser.add_argument("-a", "--annotationfile", dest = "annot", type = str, help="Full path to the file appropriate Entity-term mapping ")
 	parser.add_argument("-f", "--ontologyfile", dest = "ontology", type = str, help="Full path to the ontology file")
 	parser.add_argument("-n", "--namespace", dest = "ontospace", type = str, help="The name space of the ontology being used ", default = 'biological_process', metavar="str")
-	parser.add_argument("-o", "--out", dest="outfile", type = str, help = "Naming the SS scores output file ", default = os.getcwd(), metavar="FILE")
+	parser.add_argument("-o", "--out", dest="out", type = str, help = "Naming the SS scores output directory or, if provided, output filename", default = os.getcwd(), metavar="FILE")
 	parser.add_argument("-s", "--stream", dest="stream", type = int, help="Output on (1) screen or (0) file", default = 1, metavar='int')
 	
 	argss = parser.parse_args()
@@ -69,7 +181,7 @@ def main():
 	print(('PySML v{}'.format(__version__)+', developed by {}'.format(__author__)).center(71))
 	print(('E-mail: {}'.format(__author_email__)).center(71))
 	print('\n'+74*'*'+'\n*'+'These are requirements for running Integrated Human PPI Generator tool'.center(71)+' *\n'+74*'*')
-	print('\nPlatform: Python version >= 2.7.x\n\nOS      : Independent, but tested only on Linux (Ubuntu)')
+	print('\nPlatform: Python version >= 2.7.x\n\nOS	  : Independent, but tested only on Linux (Ubuntu)')
 	print("\nThe current PyPML library version retrieves semantic similarity scores\nof all known SS models:\n")
 	print("For more information, please refer to the manual at:\n\t1. http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/pysml/PySML_Documentation.pdf\n\t2. http://web.cbio.uct.ac.za/ITGOM/post-analysis-tools/pysml/PKG-INFO\n\t3. https://github.com/gkm-software-dev/post-analysis-tools\n\nOr go to the PySML directory and type the following command line:")
 	print("\n\tpython setup.py --long-description")
@@ -78,6 +190,9 @@ def main():
 	print(('PySML is being run on {}, under'.format(datetime.datetime.now().strftime('%d-%m-%Y %H:%M'))).center(71))
 	print(('{}'.format(__license__)).center(71))
 	print(74*'*')
+
+	ScoreFile = getFilepath(argss.out, argss.mtype)
+	isFileWritable(ScoreFile)
 	
 	# Quickly check whether the type of measure provided is valid
 	if not argss.mtype in ['ic', 'cs', 'es']:
@@ -212,27 +327,23 @@ def main():
 		simscore = InformationContent(ontofile = argss.ontology, namespace = argss.ontospace, is_a = is_a, part_of = part_of) 
 		# getIC(self, approach = None, TermList = None, **kwargs)
 		simscore.getIC([s[0] for s in models], Pairs, **OtherPar)
-		ScoreFile = 'InformationContentFile%d.txt'%(random.randint(0,100000),)
 	elif argss.mtype=='cs': #computeSim(self, TermPairs, models = None, **kwargs)
 		simscore = ConceptSimilarity(ontofile = argss.ontology, namespace = argss.ontospace, is_a = is_a, part_of = part_of)
 		simscore.computeSim(Pairs, models, **OtherPar)
-		ScoreFile = 'ConceptSSFile%d.txt'%(random.randint(0,100000),)
 	elif argss.mtype=='es': #['GO:0000022', 'GO:0051231', 'GO:1903047', 'GO:0000278', 'GO:0007052', 'GO:0000023', 'GO:0005984'], [nunivers-zho resnik:zhang wang wang_edge lin,zanchez aic wu hrss jiang]
 		simscore = EntitySimilarity(ontofile = argss.ontology, namespace = argss.ontospace, is_a = is_a, part_of = part_of)
 		simscore.entitySim(Annots, Pairs, models, **OtherPar)
-		ScoreFile = 'EntitySSFile%d.txt'%(random.randint(0,100000),)
-	
+
 	# Finally, outputting the score on screen or written into a file! 
 	if argss.stream:
 		print(simscore)
 	else:# Print in a file
-		arg = '/'.join([argss.outfile, ScoreFile])
 		try:
-			fw = open(arg, 'w')
+			fw = open(ScoreFile, 'w')
 			fw.write(repr(simscore)+'\n')
-			print("Scores are reported in the file: %s"%(arg,))
+			print("Scores are reported in the file: %s"%(ScoreFile,))
 		except:
-			parser.error("\nWriting output error\nImpossible to write in %s\nargument -o/--out: Output error, scores cannot be written in the file.\n"%(arg,))
+			parser.error("\nWriting output error\nImpossible to write in %s\nargument -o/--out: Output error, scores cannot be written in the file.\n"%(ScoreFile,))
 	
 	print("Processing accomplished on %s. Thanks!"%str(time.asctime(time.localtime())))
 	tt = time.time()-now
