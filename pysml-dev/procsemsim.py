@@ -191,6 +191,7 @@ def main():
 	print(('{}'.format(__license__)).center(71))
 	print(74*'*')
 
+	# Build file path and check if file is writable.
 	ScoreFile = getFilepath(argss.out, argss.mtype)
 	isFileWritable(ScoreFile)
 	
