@@ -78,21 +78,6 @@ def main():
 	print(('PySML is being run on {}, under'.format(datetime.datetime.now().strftime('%d-%m-%Y %H:%M'))).center(71))
 	print(('{}'.format(__license__)).center(71))
 	print(74*'*')
-	print('\nEnter 1 to continue and 2 to exit\n')
-	
-	if sys.version_info.major < 3: raw_pass = raw_input
-	else: raw_pass = input
-	while True:
-		a = raw_pass('> ')
-		try: 
-			a = int(a)
-			if a in [1,2]: break
-			print('Please enter 1 to continue and 2 to exit')
-		except: print('Please enter 1 to continue and 2 to exit')
-	if a==2:
-		print("\nExiting PySML. Thanks for using this tool! You can try again at any time.\n")
-		print(74*'*'+'\n')
-		sys.exit(2)
 	
 	# Quickly check whether the type of measure provided is valid
 	if not argss.mtype in ['ic', 'cs', 'es']:
