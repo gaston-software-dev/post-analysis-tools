@@ -59,7 +59,6 @@ def getFilepath (out, mtype):
 				pathargument = os.path.split(out)
 
 				if (pathargument[0]):
-					isDirValid(pathargument[0])
 					ScoreFile = out
 				else:
 					ScoreFile = os.path.sep.join([os.getcwd(), pathargument[1]])
@@ -77,7 +76,6 @@ def getFilepath (out, mtype):
 	return ScoreFile
 
 def generateModelFilename(mtype, directory):
-	isDirValid(directory)
 	if mtype=='ic':
 		ScoreFile = os.path.normpath(os.sep.join([directory, 'InformationContentFile%d.txt'%(random.randint(0,100000),)]))
 	elif mtype=='cs':
@@ -157,9 +155,9 @@ def is_pathname_valid(pathname: str) -> bool:
 	else:
 		return True
 
-def isDirValid(directory):
-	if not (os.path.isdir(directory)):
-		sys.exit("Directory Error: "+directory+" does not exist.\n")
+def isDirValid(ScoreFile):
+	if not (os.path.isdir(os.path.dirname(ScoreFile))):
+		sys.exit("Directory Error: "+os.path.dirname(ScoreFile)+" does not exist.\n")
 
 def main():
 	from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
@@ -193,6 +191,7 @@ def main():
 
 	# Build file path and check if file is writable.
 	ScoreFile = getFilepath(argss.out, argss.mtype)
+	isDirValid(ScoreFile)
 	isFileWritable(ScoreFile)
 	
 	# Quickly check whether the type of measure provided is valid
