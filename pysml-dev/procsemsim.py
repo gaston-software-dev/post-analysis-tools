@@ -62,7 +62,7 @@ def getFilepath (out, mtype):
 					isDirValid(pathargument[0])
 					ScoreFile = out
 				else:
-					ScoreFile = os.sep.join(os.getcwd(), pathargument[1])
+					ScoreFile = os.path.sep.join([os.getcwd(), pathargument[1]])
 			else:
 				ScoreFile = generateModelFilename(mtype, out)
 		else:

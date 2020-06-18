@@ -375,7 +375,7 @@ class InformationContent(object):
 		tmp = set(self.approach); tmp.discard('zanchez')
 		if not self.DicLevels and tmp: # Getting terms levels for approaches requiring them
 			# Get longest paths [short neg] as levels
-			DicLevels = nx.bellman_ford(self.DagStr, self.oroot) 
+			DicLevels = nx.bellman_ford_predecessor_and_distance(self.DagStr, self.oroot) 
 			self.DicLevels = DicLevels[-1]
 			del DicLevels
 
