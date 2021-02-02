@@ -293,22 +293,42 @@ class InformationContent(object):
 		if not TermStats or not isinstance(TermStats, dict): # Break it as TermStats is empty or not a dictionary
 			print(InputError('TermStats Value or Type Error', 'TermStats type and value on line 299, if provided, should be a dictionary\nkey (term)/value (statistical count) mapping\n\nPlease refer to the tool documentation, fix this issue and try again ...\n'))
 			sys.exit(3)
-
-		tinfo = {}
-		for t in self.DagStr:
-			tinfo[t] = TermStats[self.Dag[t]] if self.Dag[t] in TermStats else 0
+		ctinfo = {}
 		rlevel = sorted(list(set(self.DicLevels.values())))
-		if not tinfo:
-			print(InputError('Ontology terms error or not found', 'TermStats dictionary: key (term)/value (statistical count) mapping\nNo term provided in TermStats is in the current version of the ontology.\n\nPlease refer to the tool documentation, fix this issue and try again ...\n'))
-			sys.exit(4)
 		
-		for i in rlevel:
-			for j in [c for c in self.DicLevels if self.DicLevels[c]==i]:
-				tinfo[j] += sum([tinfo[k] for k in self.DagStr[j]])
-		troot = tinfo[self.oroot]; ctinfo = {}
-		for t in tinfo:
-			 try: ctinfo[t]= -LOG(1.0*tinfo[t]/troot)
-			 except: pass
+		if(isinstance(list(TermStats.values())[0],int)):
+			
+			tinfo = {}
+			for t in self.DagStr:
+				tinfo[t] = TermStats[self.Dag[t]] if self.Dag[t] in TermStats else 0
+			
+			if not tinfo:
+				print(InputError('Ontology terms error or not found', 'TermStats dictionary: key (term)/value (statistical count or entity list) mapping\nNo term provided in TermStats is in the current version of the ontology.\n\nPlease refer to the tool documentation, fix this issue and try again ...\n'))
+				sys.exit(4)
+			troot = tinfo[self.oroot]
+			
+			for t in tinfo:
+				try: ctinfo[t]= -LOG(1.0*tinfo[t]/troot)
+				except: pass
+		else:
+			
+			tinfo = {}
+			for t in self.DagStr:
+				tinfo[t] = set(TermStats[self.Dag[t]]) if self.Dag[t] in TermStats else set()
+			
+			for i in rlevel:
+				for j in [c for c in self.DicLevels if self.DicLevels[c]==i]:
+					for k in self.DagStr[j]:
+						tinfo[j] = tinfo[j].union(tinfo[k])
+			if not tinfo:
+					print(InputError('Ontology terms error or not found', 'TermStats dictionary: key (term)/value (statistical count or entity list) mapping\nNo term provided in TermStats is in the current version of the ontology.\n\nPlease refer to the tool documentation, fix this issue and try again ...\n'))
+					sys.exit(4)
+			troot = 1.0*len(tinfo[self.oroot])
+			print(troot)
+			for t in tinfo:
+				 try: ctinfo[t]= -LOG(1.0*len(tinfo[t])/troot)
+				 except: pass
+		
 		return ctinfo
 
 	def virtualIC(self, **kwargs):
