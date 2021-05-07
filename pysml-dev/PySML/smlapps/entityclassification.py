@@ -5,7 +5,7 @@
 This python module is part of the PySML library, which is a tool for Gene 
 Ontology-based functional analysis using term information content 
 measures.
-This python code implements hierarchical, Graph spectral (kmeans) and 
+This python module implements hierarchical, Graph spectral (kmeans) and 
 model or communuity-based clustering of genes and proteins based on their 
 Gene Ontology annotations. Hierarchical and Graph spectral approaches are 
 used as implemented under scipy and community-based approach is implemen-

@@ -6,10 +6,9 @@ This python file is part of the PySML tool, which is a tool for semantic
 similarity between objects annotated by ontology terms or concepts, e,g.,
 Gene Ontology-based functional analysis using term information content 
 measures.
-This python code implements fuzzy entity search or identification based
-on semantic similarity concepts. Furthemore, this is context independent 
-and can be used for any GO annotated dataset as population background or
-reference and is not a context-based search.
+This python module implements term or concept semantic similarity measures. 
+Furthemore, this is context independent and can be used for any ontology.
+It is not only limited to the gene ontology or biomedical ontologies.
 
 The main website for the PySML library is:
  

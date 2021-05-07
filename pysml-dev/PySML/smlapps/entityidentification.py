@@ -4,7 +4,7 @@
 This python file is part of the PySML library, which is a tool for Gene 
 Ontology-based functional analysis using term information content 
 measures.
-This python code implements fuzzy protein search or identification based
+This python code implements fuzzy entity search or identification based
 on semantic similarity concepts. Furthemore, this is context independent 
 and can be used for any ontology annotated dataset as population background 
 or reference and is not a context-based search.
